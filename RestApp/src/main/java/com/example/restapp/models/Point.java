@@ -1,5 +1,6 @@
 package com.example.restapp.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -16,6 +17,11 @@ public class Point {
     private double latitude;
     @Column(name = "longitude")
     private double longitude;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "route_id", referencedColumnName = "route_id")
+    private Route route;
 
     public Point(){}
 
@@ -64,4 +70,22 @@ public class Point {
         this.longitude = longitude;
     }
 
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
+    }
+
+    @Override
+    public String toString() {
+        return "Point{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", route=" + route.getName() +
+                '}';
+    }
 }

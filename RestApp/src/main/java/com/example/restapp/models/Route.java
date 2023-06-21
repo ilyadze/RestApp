@@ -29,6 +29,9 @@ public class Route {
     @Column(name = "description")
     private String description;
 
+    @OneToMany(mappedBy = "route",cascade = CascadeType.ALL)
+    private List<Point> points;
+
     public Route() {}
 
 
@@ -75,6 +78,14 @@ public class Route {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Point> getPoints() {
+        return points;
+    }
+
+    public void setPoints(List<Point> points) {
+        this.points = points;
     }
 
     @Override
