@@ -17,10 +17,6 @@ public class Point {
     @Column(name = "longitude")
     private double longitude;
 
-
-    @Column(name = "description")
-    private String description;
-
     public Point(){}
 
     public Point(int id, String name, double latitude, double longitude, String description) {
@@ -28,14 +24,12 @@ public class Point {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.description = description;
     }
 
     public Point(String name, double latitude, double longitude, String description) {
         this.name = name;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.description = description;
     }
 
     public int getId() {
@@ -70,11 +64,4 @@ public class Point {
         this.longitude = longitude;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 }

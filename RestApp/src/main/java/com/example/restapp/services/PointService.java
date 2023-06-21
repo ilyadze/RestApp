@@ -25,7 +25,7 @@ public class PointService {
         return pointRepository.findAll();
     }
 
-    public Point findRoute(int id) {
+    public Point findPoint(int id) {
         return pointRepository.findById(id).orElseThrow(PointNotFoundException::new);
     }
 
@@ -35,17 +35,17 @@ public class PointService {
     }
 
     @Transactional
-    public void addRoute(Point point) {
+    public void addPoint(Point point) {
         pointRepository.save(point);
     }
 
     @Transactional
-    public void deleteRoute(Point point) {
+    public void deletePoint(Point point) {
         pointRepository.delete(point);
     }
 
     @Transactional
-    public void deleteRouteById(int id) {
+    public void deletePointById(int id) {
         pointRepository.deleteById(id);
     }
 }
