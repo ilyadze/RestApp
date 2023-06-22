@@ -1,6 +1,9 @@
 package com.example.restapp.controllers;
 
+import com.example.restapp.dto.RouteDTO;
 import com.example.restapp.models.Route;
+import com.example.restapp.models.Point;
+import com.example.restapp.services.PointService;
 import com.example.restapp.services.RouteService;
 import com.example.restapp.util.RouteErrorResponse;
 import com.example.restapp.util.RouteException;
@@ -13,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,10 +24,12 @@ import java.util.List;
 public class RouteController {
 
     private final RouteService routeService;
+    private final PointService pointService;
 
     @Autowired
-    public RouteController(RouteService routeService) {
+    public RouteController(RouteService routeService, PointService pointService) {
         this.routeService = routeService;
+        this.pointService = pointService;
     }
 
     @GetMapping
@@ -36,8 +42,8 @@ public class RouteController {
         return routeService.findRoute(id);
     }
 
-    @DeleteMapping
-    public ResponseEntity<HttpStatus> deleteRoute(@RequestBody @Valid Route route, BindingResult bindingResult) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteRoute(@RequestBody @Valid RouteDTO routeDTO, @PathVariable("id")Integer id, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
             StringBuilder errMsg = new StringBuilder();
             List<FieldError> errors =  bindingResult.getFieldErrors();
@@ -48,7 +54,8 @@ public class RouteController {
             }
             throw new RouteException((errMsg.toString()));
         }
-
+        Route route = convertToRoute(routeDTO);
+        route.setId(id);
         routeService.deleteRoute(route);
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -57,7 +64,7 @@ public class RouteController {
 
 
     @PostMapping
-    public ResponseEntity<HttpStatus> create(@RequestBody @Valid Route route, BindingResult bindingResult) {
+    public ResponseEntity<HttpStatus> create(@RequestBody @Valid RouteDTO routeDTO, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
             StringBuilder errMsg = new StringBuilder();
             List<FieldError> errors =  bindingResult.getFieldErrors();
@@ -68,12 +75,12 @@ public class RouteController {
             }
             throw new RouteException((errMsg.toString()));
         }
-        routeService.addRoute(route);
+        routeService.addRoute(convertToRoute(routeDTO));
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<HttpStatus> updateRoute(@PathVariable("id")Integer id,@RequestBody @Valid Route route, BindingResult bindingResult)  {
+    public ResponseEntity<HttpStatus> updateRoute(@PathVariable("id")Integer id,@RequestBody @Valid RouteDTO routeDTO, BindingResult bindingResult)  {
         if(bindingResult.hasErrors()) {
             StringBuilder errMsg = new StringBuilder();
             List<FieldError> errors =  bindingResult.getFieldErrors();
@@ -84,7 +91,7 @@ public class RouteController {
             }
             throw new RouteException((errMsg.toString()));
         }
-        routeService.update(id, route);
+        routeService.update(id, convertToRoute(routeDTO));
         return ResponseEntity.ok(HttpStatus.OK);
     }
     @ExceptionHandler
@@ -105,4 +112,12 @@ public class RouteController {
         return new ResponseEntity<>(responce, HttpStatus.BAD_REQUEST);
     }
 
+    private Route convertToRoute(RouteDTO routeDTO) {
+        Route route = new Route();
+        route.setDescription(routeDTO.getDescription());
+        route.setName(routeDTO.getName());
+        route.setDistance(routeDTO.getDistance());
+
+        return  route;
+    }
 }
